@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LineChart, CalendarDays } from "lucide-react";
+import { LineChart, CalendarDays, Building2 } from "lucide-react";
 import { useMemo } from "react";
 
 const items = [
   { to: "/", label: "Advisor", icon: LineChart, exact: true },
   { to: "/earnings", label: "Earnings", icon: CalendarDays },
+  { to: "/sectors", label: "Sectors", icon: Building2 },
 ];
 
 export default function SideRailNav() {

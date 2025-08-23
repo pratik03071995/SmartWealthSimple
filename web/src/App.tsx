@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import SideRailNav from "./components/SideRailNav";
 import SmartWealthNeonWizard from "./components/SmartWealthNeonWizard";
 import EarningsCalendar from "./components/EarningsCalendar";
+import SectorCompanySelector from "./components/SectorCompanySelector";
 
 function PageTransition({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -58,6 +59,16 @@ export default function App() {
               >
                 Earnings
               </NavLink>
+              <NavLink
+                to="/sectors"
+                className={({ isActive }) =>
+                  `flex-1 text-center py-2 text-sm rounded-xl ${
+                    isActive ? "bg-sky-100 text-sky-700" : "text-slate-700"
+                  }`
+                }
+              >
+                Sectors
+              </NavLink>
             </div>
           </nav>
 
@@ -77,6 +88,14 @@ export default function App() {
                 element={
                   <PageTransition>
                     <EarningsCalendar />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/sectors"
+                element={
+                  <PageTransition>
+                    <SectorCompanySelector />
                   </PageTransition>
                 }
               />
