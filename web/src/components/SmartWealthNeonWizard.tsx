@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Sparkles, Rocket, LineChart, ChevronRight, ArrowLeft,
-  Shield, DollarSign, TrendingUp, PiggyBank, BarChart3
-} from 'lucide-react'
+import { Rocket, LineChart, ChevronRight, ArrowLeft, Shield } from 'lucide-react'
 
 /** ======== LIGHT THEME ======== */
-const PAGE_BG = "bg-gradient-to-br from-sky-50 to-emerald-50"
 const CARD_BG = "bg-white border border-slate-200"
 const GRADIENT_BAR = "bg-gradient-to-r from-sky-400 via-emerald-400 to-teal-400"
 const BUTTON_GRADIENT = "bg-gradient-to-r from-sky-400 to-emerald-400"
 
 /** ======== STEPS / OPTIONS ======== */
-const steps = [
-  "Welcome", "Basics", "Strategy", "Sectors", "Sub-sectors", "Goals", "Results"
-] as const
+const steps = ["Welcome", "Basics", "Strategy", "Sectors", "Sub-sectors", "Goals", "Results"] as const
 
 const sectorList = [
   "AI & Semiconductors","EV & Clean Energy","Biotech & HealthTech","FinTech",
@@ -52,7 +46,7 @@ const COMPANY_LOGOS: Record<string, string> = {
 }
 const logoFor = (t: string) => COMPANY_LOGOS[t?.toUpperCase?.()] || null
 
-/** ======== LIGHT BACKGROUND BLOBS (very subtle) ======== */
+/** ======== VERY SOFT BACKGROUND BLOBS ======== */
 function SoftBackground() {
   return (
     <div className="absolute inset-0 -z-10 overflow-hidden">
@@ -89,15 +83,9 @@ function Field({ label, children }: { label: string, children: React.ReactNode }
   )
 }
 
-function Select({
-  options, value, onChange
-}: { options: string[], value: string, onChange: (v: any) => void }) {
+function Select({ options, value, onChange }: { options: string[], value: string, onChange: (v: any) => void }) {
   return (
-    <select
-      className={inputLight}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    >
+    <select className={inputLight} value={value} onChange={(e) => onChange(e.target.value)}>
       <option value="">Select…</option>
       {options.map(o => <option key={o} value={o}>{o}</option>)}
     </select>
@@ -118,9 +106,7 @@ function ToggleCard({ label, selected, onClick, icon }: {
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className={`flex items-center gap-2 rounded-2xl border px-4 py-3 text-left transition shadow-sm
-        ${selected
-          ? "border-sky-400 bg-sky-50"
-          : "border-slate-300 bg-white hover:bg-slate-50"}`}
+        ${selected ? "border-sky-400 bg-sky-50" : "border-slate-300 bg-white hover:bg-slate-50"}`}
     >
       {icon}
       <span className="text-slate-800 font-medium">{label}</span>
@@ -144,7 +130,7 @@ function Chip({ label, selected, onClick }: { label: string, selected: boolean, 
   )
 }
 
-/** ======== SPARKLINE (light theme) ======== */
+/** ======== SPARKLINE (light) ======== */
 function Sparkline({ data, height = 60 }: { data: number[]; height?: number }) {
   const width = 240
   const min = Math.min(...data)
@@ -183,7 +169,7 @@ function Sparkline({ data, height = 60 }: { data: number[]; height?: number }) {
   )
 }
 
-/** ======== RESULT CARD (logo + chart + stats, light) ======== */
+/** ======== RESULT CARD ======== */
 function ResultCard({ pick }: { pick: any }) {
   const logo = logoFor(pick.ticker || pick.name)
   const [range, setRange] = useState<'1Y' | '5Y'>('1Y')
@@ -233,7 +219,7 @@ function ResultCard({ pick }: { pick: any }) {
   )
 }
 
-/** ======== MAIN WIZARD (light, slide/fade transitions) ======== */
+/** ======== MAIN WIZARD (no internal header) ======== */
 export default function SmartWealthNeonWizard() {
   const [step, setStep] = useState(0)
   const [name, setName] = useState("")
@@ -259,6 +245,7 @@ export default function SmartWealthNeonWizard() {
     return true
   }
 
+  // demo series generator (used if API doesn’t return series1Y/series5Y)
   function genSeries(mode: 'up' | 'volatile' = 'up', len = 60) {
     let v = 100, arr: number[] = []
     for (let i = 0; i < len; i++) {
@@ -298,22 +285,10 @@ export default function SmartWealthNeonWizard() {
   const prev = () => setStep(s => Math.max(s - 1, 0))
 
   return (
-    <div className={`relative min-h-screen flex items-center justify-center ${PAGE_BG} text-slate-900 overflow-hidden`}>
+    <div className="relative min-h-[calc(100vh-6rem)] flex items-start justify-center text-slate-900 overflow-hidden">
       <SoftBackground />
 
-      {/* Top bar (clean, no extra badges/icons) */}
-      <div className="absolute top-0 left-0 w-full px-6 pt-6 flex items-center justify-between z-10">
-        <div className="flex items-center gap-2">
-          <Sparkles className="text-sky-500" size={26} />
-          <span className="font-semibold text-lg tracking-wide">SmartWealth AI</span>
-        </div>
-        <div className="flex items-center gap-3 text-slate-500">
-          <DollarSign size={18}/> <TrendingUp size={18}/> <PiggyBank size={18}/> <BarChart3 size={18}/>
-        </div>
-      </div>
-
-      {/* Card */}
-      <div className="w-full max-w-2xl mx-auto z-10 px-4 sm:px-0">
+      <div className="w-full max-w-2xl mx-auto z-10 px-4 sm:px-0 pt-4">
         <ProgressBar step={step} />
         <motion.div
           key={step}
@@ -360,7 +335,7 @@ export default function SmartWealthNeonWizard() {
 
             {step === 2 && (
               <motion.div key="strategy" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><Shield size={22}/> Strategy</h2>
+                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><LineChart size={22}/> Strategy</h2>
                 <Field label="Investment Horizon">
                   <Select options={["1 year","3 years","5 years","10+ years"]} value={horizon} onChange={setHorizon} />
                 </Field>
@@ -426,7 +401,7 @@ export default function SmartWealthNeonWizard() {
 
             {step === 6 && (
               <motion.div key="results" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><Sparkles size={22}/> Results</h2>
+                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">Results</h2>
                 <div className="mb-4 text-slate-700 text-sm">
                   <div><b>Horizon:</b> {horizon}</div>
                   <div><b>Risk:</b> {risk}</div>
@@ -447,7 +422,7 @@ export default function SmartWealthNeonWizard() {
             )}
           </AnimatePresence>
 
-          {/* Nav */}
+          {/* Bottom nav */}
           <div className="flex justify-between mt-8">
             {step > 0 && step < 6 && (
               <button
@@ -457,7 +432,7 @@ export default function SmartWealthNeonWizard() {
                 <ArrowLeft size={18}/> Back
               </button>
             )}
-            {step < 5 && (
+            {step < 5 && step !== 0 && (
               <button
                 className={`flex items-center gap-1 px-6 py-2 rounded-xl font-semibold shadow-md transition
                   ${canNext() ? `${BUTTON_GRADIENT} text-white hover:shadow-lg hover:scale-[1.02]` : "bg-slate-100 text-slate-400 cursor-not-allowed ring-1 ring-slate-200"}
