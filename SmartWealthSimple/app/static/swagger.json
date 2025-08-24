@@ -1,0 +1,813 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SmartWealthAI API",
+    "description": "Comprehensive financial data API with AI-powered stock recommendations, news aggregation, and market analysis",
+    "version": "1.0.0",
+    "contact": {
+      "name": "SmartWealthAI",
+      "url": "http://127.0.0.1:5001"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:5001",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Check if the API is running",
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-08-23T16:22:52.318183"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stock/{ticker}": {
+      "get": {
+        "summary": "Get Comprehensive Stock Data",
+        "description": "Get comprehensive stock information from all sources",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comprehensive stock data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ticker": {
+                      "type": "string"
+                    },
+                    "sources": {
+                      "type": "object"
+                    },
+                    "last_updated": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/stock/{ticker}/simple": {
+      "get": {
+        "summary": "Get Basic Stock Info",
+        "description": "Get basic stock information from Yahoo Finance",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Basic stock information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ticker": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "current_price": {
+                      "type": "number"
+                    },
+                    "price_change_pct": {
+                      "type": "number"
+                    },
+                    "market_cap": {
+                      "type": "number"
+                    },
+                    "pe_ratio": {
+                      "type": "number"
+                    },
+                    "sector": {
+                      "type": "string"
+                    },
+                    "industry": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stock/{ticker}/news": {
+      "get": {
+        "summary": "Get Stock News",
+        "description": "Get news articles for a specific stock from all sources",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "description": "Number of news articles to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stock news articles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "news": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "published_time": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "total_count": {
+                      "type": "integer"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news": {
+      "get": {
+        "summary": "Get Financial News",
+        "description": "Get aggregated financial news from all sources",
+        "parameters": [
+          {
+            "name": "source",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["all", "yahoo", "marketwatch", "cnbc", "morningstar", "seeking_alpha", "finviz"],
+              "default": "all"
+            },
+            "description": "News source to filter by"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "description": "Number of news articles to return"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["general", "market", "technology", "economy"],
+              "default": "general"
+            },
+            "description": "News category"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Financial news articles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "published_time": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "sentiment": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news/search": {
+      "get": {
+        "summary": "Search News",
+        "description": "Search for news articles across all sources",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query"
+          },
+          {
+            "name": "sources",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of sources to search"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "description": "Number of results to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query parameter 'q' is required"
+          }
+        }
+      }
+    },
+    "/api/sources/yahoo/{ticker}": {
+      "get": {
+        "summary": "Get Yahoo Finance Data",
+        "description": "Get stock data and news specifically from Yahoo Finance",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "AAPL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Yahoo Finance data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stock": {
+                      "type": "object"
+                    },
+                    "news": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "last_updated": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market-movers": {
+      "get": {
+        "summary": "Get Market Movers",
+        "description": "Get top gainers and losers from Yahoo Finance",
+        "responses": {
+          "200": {
+            "description": "Market movers data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "gainers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "losers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "last_updated": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market-overview": {
+      "get": {
+        "summary": "Get Market Overview",
+        "description": "Get comprehensive market overview from all sources",
+        "responses": {
+          "200": {
+            "description": "Market overview data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/sectors": {
+      "get": {
+        "summary": "Get Available Sectors",
+        "description": "Get all available sectors for AI analysis",
+        "responses": {
+          "200": {
+            "description": "Available sectors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sectors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "growth_potential": {
+                            "type": "string"
+                          },
+                          "risk_level": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "total_sectors": {
+                      "type": "integer"
+                    },
+                    "last_updated": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/sectors/{sector_name}": {
+      "get": {
+        "summary": "Get Sector Details",
+        "description": "Get detailed information about a specific sector",
+        "parameters": [
+          {
+            "name": "sector_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Technology"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sector details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sector": {
+                      "type": "object"
+                    },
+                    "last_updated": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sector not found"
+          }
+        }
+      }
+    },
+    "/api/ai/recommendations": {
+      "post": {
+        "summary": "Get AI Recommendations",
+        "description": "Get AI-powered stock recommendations based on sector and subsector selection",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["sector"],
+                "properties": {
+                  "sector": {
+                    "type": "string",
+                    "description": "Sector name"
+                  },
+                  "subsectors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of subsectors"
+                  },
+                  "market_cap_preference": {
+                    "type": "string",
+                    "enum": ["all", "large", "mid", "small"],
+                    "default": "all"
+                  },
+                  "risk_tolerance": {
+                    "type": "string",
+                    "enum": ["low", "medium", "high"],
+                    "default": "medium"
+                  },
+                  "investment_horizon": {
+                    "type": "string",
+                    "enum": ["short_term", "medium_term", "long_term"],
+                    "default": "long_term"
+                  },
+                  "max_recommendations": {
+                    "type": "integer",
+                    "default": 20
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI recommendations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters"
+          }
+        }
+      }
+    },
+    "/api/portfolio/analyze": {
+      "post": {
+        "summary": "Analyze Portfolio",
+        "description": "Analyze a portfolio of stocks using all data sources",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["tickers"],
+                "properties": {
+                  "tickers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of stock tickers"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Portfolio analysis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No tickers provided"
+          }
+        }
+      }
+    },
+    "/api/companies/by-sector": {
+      "post": {
+        "summary": "Get Companies by Sector/Subsector",
+        "description": "Get top 50 companies by market cap for selected sectors and subsectors using Yahoo Finance data",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sectors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of sectors to filter by",
+                    "example": ["Technology", "Healthcare"]
+                  },
+                  "subsectors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of subsectors to filter by",
+                    "example": ["Software & Services", "Semiconductors"]
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "default": 50,
+                    "description": "Maximum number of companies to return"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Companies data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sectors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "subsectors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "companies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ticker": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "current_price": {
+                            "type": "number"
+                          },
+                          "price_change_pct": {
+                            "type": "number"
+                          },
+                          "market_cap": {
+                            "type": "number"
+                          },
+                          "pe_ratio": {
+                            "type": "number"
+                          },
+                          "sector": {
+                            "type": "string"
+                          },
+                          "industry": {
+                            "type": "string"
+                          },
+                          "volume": {
+                            "type": "number"
+                          },
+                          "avg_volume": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "company_count": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "last_updated": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "At least one sector or subsector must be specified"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StockData": {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "current_price": {
+            "type": "number"
+          },
+          "price_change": {
+            "type": "number"
+          },
+          "price_change_pct": {
+            "type": "number"
+          },
+          "market_cap": {
+            "type": "number"
+          },
+          "pe_ratio": {
+            "type": "number"
+          },
+          "sector": {
+            "type": "string"
+          },
+          "industry": {
+            "type": "string"
+          }
+        }
+      },
+      "NewsArticle": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "published_time": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "sentiment": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}
