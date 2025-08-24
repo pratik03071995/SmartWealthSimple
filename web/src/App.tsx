@@ -1,24 +1,127 @@
+// web/src/App.tsx
+import React from "react";
 import { BrowserRouter, Routes, Route, NavLink, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import Header from "./components/Header";
-import SideRailNav from "./components/SideRailNav";
+
 import SmartWealthNeonWizard from "./components/SmartWealthNeonWizard";
 import EarningsCalendar from "./components/EarningsCalendar";
+import LearnHub from "./components/LearnHub";
+
+import { Banknote, LineChart, CalendarDays, GraduationCap } from "lucide-react";
+
+function Header() {
+  const linkBase =
+    "px-3 py-2 rounded-xl text-sm transition ring-1 focus:outline-none focus:ring-2 focus:ring-sky-400/60";
+  const linkInactive = "text-slate-200/80 ring-slate-800 hover:bg-slate-800/60 hover:text-white";
+  const linkActive = "bg-slate-800 text-white ring-slate-700";
+
+  return (
+    <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-800">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="h-14 flex items-center gap-4">
+          {/* Brand (left-aligned, white, no animation) */}
+          <NavLink to="/" className="group flex items-center gap-2 select-none" aria-label="SmartWealth AI Home">
+            <span className="h-7 w-7 grid place-items-center rounded-lg bg-slate-800 ring-1 ring-slate-700">
+              <Banknote size={16} className="text-emerald-300" />
+            </span>
+            <span className="text-base sm:text-lg font-bold text-white tracking-tight">
+              SmartWealth AI
+            </span>
+          </NavLink>
+
+          {/* Nav */}
+          <nav className="flex items-center gap-2">
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                `${linkBase} ${isActive ? linkActive : linkInactive} flex items-center gap-1.5`
+              }
+            >
+              <LineChart size={14} />
+              <span>Advisor</span>
+            </NavLink>
+
+            <NavLink
+              to="/earnings"
+              className={({ isActive }) =>
+                `${linkBase} ${isActive ? linkActive : linkInactive} flex items-center gap-1.5`
+              }
+            >
+              <CalendarDays size={14} />
+              <span>Earnings</span>
+            </NavLink>
+
+            <NavLink
+              to="/learn"
+              className={({ isActive }) =>
+                `${linkBase} ${isActive ? linkActive : linkInactive} flex items-center gap-1.5`
+              }
+            >
+              <GraduationCap size={14} />
+              <span>Learn</span>
+            </NavLink>
+          </nav>
+        </div>
+      </div>
+    </header>
+  );
+}
 
 function PageTransition({ children }: { children: React.ReactNode }) {
-  const location = useLocation();
+  // Subtle page transition on route change (title itself is not animated)
+  return (
+    <motion.main
+      key={useLocation().pathname}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.25 }}
+      className="min-h-[calc(100vh-56px)]"
+    >
+      {children}
+    </motion.main>
+  );
+}
+
+function AppRoutes() {
   return (
     <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -12 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full"
-      >
-        {children}
-      </motion.div>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <PageTransition>
+              <SmartWealthNeonWizard />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/earnings"
+          element={
+            <PageTransition>
+              <EarningsCalendar />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/learn"
+          element={
+            <PageTransition>
+              <LearnHub />
+            </PageTransition>
+          }
+        />
+        {/* Fallback: redirect unknown routes to Advisor */}
+        <Route
+          path="*"
+          element={
+            <PageTransition>
+              <SmartWealthNeonWizard />
+            </PageTransition>
+          }
+        />
+      </Routes>
     </AnimatePresence>
   );
 }
@@ -26,63 +129,9 @@ function PageTransition({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[radial-gradient(1200px_600px_at_10%_-10%,#ecfeff_0%,transparent_60%),radial-gradient(900px_500px_at_90%_-20%,#fff7ed_0%,transparent_60%),linear-gradient(#f8fafc,#f1f5f9)]">
+      <div className="min-h-screen">
         <Header />
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 flex gap-6">
-          {/* Left rail (desktop) */}
-          <aside className="hidden md:block">
-            <SideRailNav />
-          </aside>
-
-          {/* Top tabs (mobile) */}
-          <nav className="md:hidden w-full mb-4 -mt-2">
-            <div className="bg-white/90 backdrop-blur ring-1 ring-slate-200 rounded-2xl p-1 flex">
-              <NavLink
-                to="/"
-                end
-                className={({ isActive }) =>
-                  `flex-1 text-center py-2 text-sm rounded-xl ${
-                    isActive ? "bg-sky-100 text-sky-700" : "text-slate-700"
-                  }`
-                }
-              >
-                Advisor
-              </NavLink>
-              <NavLink
-                to="/earnings"
-                className={({ isActive }) =>
-                  `flex-1 text-center py-2 text-sm rounded-xl ${
-                    isActive ? "bg-sky-100 text-sky-700" : "text-slate-700"
-                  }`
-                }
-              >
-                Earnings
-              </NavLink>
-            </div>
-          </nav>
-
-          {/* Page content */}
-          <main className="flex-1">
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <PageTransition>
-                    <SmartWealthNeonWizard />
-                  </PageTransition>
-                }
-              />
-              <Route
-                path="/earnings"
-                element={
-                  <PageTransition>
-                    <EarningsCalendar />
-                  </PageTransition>
-                }
-              />
-            </Routes>
-          </main>
-        </div>
+        <AppRoutes />
       </div>
     </BrowserRouter>
   );
