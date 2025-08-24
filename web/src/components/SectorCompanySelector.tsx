@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { API_ENDPOINTS } from '../config';
 
 interface Company {
   ticker: string;
@@ -48,7 +49,7 @@ const SectorCompanySelector: React.FC = () => {
 
   const fetchSectors = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5001/api/ai/sectors');
+      const response = await fetch(API_ENDPOINTS.sectors);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -82,7 +83,7 @@ const SectorCompanySelector: React.FC = () => {
     console.log('Fetching companies for sectors:', selectedSectors);
 
     try {
-      const response = await fetch('http://127.0.0.1:5001/api/companies/dynamic', {
+      const response = await fetch(API_ENDPOINTS.companies, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -153,8 +154,8 @@ const SectorCompanySelector: React.FC = () => {
           console.error('Streaming error:', streamError);
           setError('Streaming failed, falling back to regular request');
           
-          // Fallback to non-streaming request
-          const fallbackResponse = await fetch('http://127.0.0.1:5001/api/companies/dynamic', {
+                           // Fallback to non-streaming request
+                 const fallbackResponse = await fetch(API_ENDPOINTS.companies, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
