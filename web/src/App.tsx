@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import SideRailNav from "./components/SideRailNav";
 import SmartWealthNeonWizard from "./components/SmartWealthNeonWizard";
 import EarningsCalendar from "./components/EarningsCalendar";
+import StockScoring from "./components/StockScoring";
 
 function PageTransition({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -49,6 +50,16 @@ export default function App() {
                 Advisor
               </NavLink>
               <NavLink
+                to="/scoring"
+                className={({ isActive }) =>
+                  `flex-1 text-center py-2 text-sm rounded-xl ${
+                    isActive ? "bg-sky-100 text-sky-700" : "text-slate-700"
+                  }`
+                }
+              >
+                Scoring
+              </NavLink>
+              <NavLink
                 to="/earnings"
                 className={({ isActive }) =>
                   `flex-1 text-center py-2 text-sm rounded-xl ${
@@ -69,6 +80,14 @@ export default function App() {
                 element={
                   <PageTransition>
                     <SmartWealthNeonWizard />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/scoring"
+                element={
+                  <PageTransition>
+                    <StockScoring />
                   </PageTransition>
                 }
               />

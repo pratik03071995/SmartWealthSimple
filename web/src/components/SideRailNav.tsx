@@ -1,10 +1,11 @@
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LineChart, CalendarDays } from "lucide-react";
+import { LineChart, CalendarDays, BarChart3 } from "lucide-react";
 import { useMemo } from "react";
 
 const items = [
   { to: "/", label: "Advisor", icon: LineChart, exact: true },
+  { to: "/scoring", label: "Stock Scoring", icon: BarChart3 },
   { to: "/earnings", label: "Earnings", icon: CalendarDays },
 ];
 

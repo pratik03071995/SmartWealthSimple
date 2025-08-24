@@ -3,6 +3,12 @@ from flask_cors import CORS
 import os
 from datetime import datetime, date
 import calendar
+import pandas as pd
+import numpy as np
+from typing import Dict, List, Optional, Union
+import yfinance as yf
+from scipy.stats import percentileofscore
+from stock_scoring import score_stocks
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 CORS(app)
@@ -58,6 +64,45 @@ def earnings():
         ds = f"{year:04d}-{month:02d}-{day:02d}"
         out.append({"ticker": tkr, "name": name, "date": ds, "time": tm, "logoUrl": logo})
     return jsonify(out)
+
+@app.route("/api/score-stocks", methods=["POST"])
+def score_stocks_endpoint():
+    """Score a list of stocks using our comprehensive scoring system"""
+    try:
+        data = request.get_json()
+        tickers = data.get('tickers', [])
+        manual_inputs = data.get('manual_inputs', {})
+        
+        if not tickers:
+            return jsonify({"error": "No tickers provided"}), 400
+        
+        # Limit to prevent abuse
+        if len(tickers) > 10:
+            return jsonify({"error": "Maximum 10 stocks allowed per request"}), 400
+        
+        # Score the stocks
+        results = score_stocks(tickers, manual_inputs)
+        
+        # Format for frontend
+        formatted_results = []
+        for result in results:
+            formatted_results.append({
+                "ticker": result["ticker"],
+                "name": result["company_info"]["name"],
+                "sector": result["company_info"]["sector"],
+                "industry": result["company_info"]["industry"],
+                "marketCap": result["company_info"]["market_cap"],
+                "totalScore": result["total_score"],
+                "grade": result["grade"],
+                "scores": result["scores"],
+                "details": result["details"],
+                "weights": result["weights"]
+            })
+        
+        return jsonify(formatted_results)
+        
+    except Exception as e:
+        return jsonify({"error": f"Scoring error: {str(e)}"}), 500
 
 # Serve static assets or SPA index.html
 @app.route("/", defaults={"path": ""})
