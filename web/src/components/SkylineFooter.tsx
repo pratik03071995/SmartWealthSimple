@@ -1,133 +1,69 @@
-// web/src/components/SkylineFooter.tsx
 import React from "react";
-import { motion } from "framer-motion";
-import {
-  Info, Link as LinkIcon, ArrowRight,
-  Instagram, Twitter, Facebook, Youtube
-} from "lucide-react";
+import { Info, Link as LinkIcon, Instagram, Twitter, Facebook, Youtube } from "lucide-react";
 
-const GlassCard: React.FC<React.PropsWithChildren<{ className?: string }>> = ({ className = "", children }) => (
-  <motion.div
-    initial={{ y: 10, opacity: 0 }}
-    animate={{ y: 0, opacity: 1 }}
-    transition={{ duration: 0.35 }}
-    className={
-      "rounded-3xl bg-white/85 backdrop-blur-md ring-1 ring-white/30 " +
-      "shadow-xl p-5 hover:shadow-2xl transition " + className
-    }
-  >
-    {children}
-  </motion.div>
-);
+const CARD =
+  "bg-white/80 backdrop-blur ring-1 ring-slate-200 rounded-2xl shadow-xl";
 
-/**
- * Floating glossy cards over the existing background.
- * No skyline, no navy band. Fixed above the slim disclaimer.
- * Rendered only on the Advisor route by your App.tsx.
- */
 export default function SkylineFooter() {
-  // Adjust this if your slim disclaimer bar height changes
-  const bottomOffset = 64; // px
-
   return (
-    <div
-      aria-label="SmartWealth overview"
-      className="fixed inset-x-0 z-20 pointer-events-none"
-      style={{ bottom: bottomOffset }}
-    >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="pointer-events-auto grid grid-cols-1 md:grid-cols-3 gap-5">
+    <section className="w-full">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 mb-28">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* About */}
-          <GlassCard>
-            <div className="flex items-center gap-2 text-slate-900">
-              <div className="h-9 w-9 grid place-items-center rounded-2xl bg-slate-100 ring-1 ring-slate-200">
-                <Info size={18} />
-              </div>
-              <div className="font-semibold">About SmartWealth</div>
+          <div className={`${CARD} p-4`}>
+            <div className="flex items-center gap-2 text-slate-800 font-semibold">
+              <Info size={16} /> About SmartWealth
             </div>
-            <p className="mt-3 text-sm text-slate-700">
+            <p className="mt-2 text-sm text-slate-700">
               We’re building an AI-assisted research companion to help you learn,
-              screen, and track potential multi-baggers—responsibly. Signals, not hype.
-              Education first.
+              screen, and track potential multi-baggers—responsibly. Signals,
+              not hype. Education first.
             </p>
             <p className="mt-3 text-xs text-slate-500">
-              <b>Note:</b> Educational only, not investment advice.
+              <span className="font-medium">Note:</span> This app is educational
+              only, not investment advice.
             </p>
-          </GlassCard>
+          </div>
 
           {/* Quick links */}
-          <GlassCard>
-            <div className="flex items-center gap-2 text-slate-900">
-              <div className="h-9 w-9 grid place-items-center rounded-2xl bg-slate-100 ring-1 ring-slate-200">
-                <LinkIcon size={18} />
-              </div>
-              <div className="font-semibold">Quick links</div>
+          <div className={`${CARD} p-4`}>
+            <div className="flex items-center gap-2 text-slate-800 font-semibold">
+              <LinkIcon size={16} /> Quick links
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <a
-                href="/"
-                className="rounded-xl px-3 py-2 ring-1 ring-slate-200 bg-white text-slate-800 text-sm flex items-center justify-between hover:bg-slate-50"
-              >
-                Advisor <ArrowRight size={14} />
-              </a>
-              <a
-                href="/earnings"
-                className="rounded-xl px-3 py-2 ring-1 ring-slate-200 bg-white text-slate-800 text-sm flex items-center justify-between hover:bg-slate-50"
-              >
-                Earnings <ArrowRight size={14} />
-              </a>
-              <a
-                href="/learn"
-                className="rounded-xl px-3 py-2 ring-1 ring-slate-200 bg-white text-slate-800 text-sm flex items-center justify-between hover:bg-slate-50 col-span-2"
-              >
+              <a href="/" className="px-3 py-2 rounded-xl ring-1 ring-slate-200 bg-slate-50 text-sm text-slate-800 hover:bg-white transition">Advisor</a>
+              <a href="/earnings" className="px-3 py-2 rounded-xl ring-1 ring-slate-200 bg-slate-50 text-sm text-slate-800 hover:bg-white transition">Earnings</a>
+              <a href="/learn" className="px-3 py-2 rounded-xl ring-1 ring-slate-200 bg-slate-50 text-sm text-slate-800 hover:bg-white transition col-span-2">
                 Learn — fundamentals, risk & valuation
-                <ArrowRight size={14} className="ml-auto" />
               </a>
             </div>
-          </GlassCard>
+          </div>
 
-          {/* Follow us */}
-          <GlassCard>
-            <div className="flex items-center gap-2 text-slate-900">
-              <div className="h-9 w-9 grid place-items-center rounded-2xl bg-slate-100 ring-1 ring-slate-200">
-                <LinkIcon size={18} />
-              </div>
-              <div className="font-semibold">Follow us</div>
+          {/* Social */}
+          <div className={`${CARD} p-4`}>
+            <div className="flex items-center gap-2 text-slate-800 font-semibold">
+              <LinkIcon size={16} /> Follow us
             </div>
-            <p className="mt-3 text-sm text-slate-700">Placeholders for now—links coming soon.</p>
-            <div className="mt-4 flex items-center gap-2">
-              <button
-                className="h-9 w-9 grid place-items-center rounded-xl bg-white ring-1 ring-slate-200 hover:bg-slate-50"
-                aria-label="Instagram"
-                title="Instagram (coming soon)"
-              >
+            <p className="mt-2 text-sm text-slate-700">
+              Placeholders for now—links coming soon.
+            </p>
+            <div className="mt-3 flex items-center gap-2">
+              <button className="h-9 w-9 rounded-xl ring-1 ring-slate-200 grid place-items-center hover:bg-slate-50 transition" aria-label="Instagram">
                 <Instagram size={16} />
               </button>
-              <button
-                className="h-9 w-9 grid place-items-center rounded-xl bg-white ring-1 ring-slate-200 hover:bg-slate-50"
-                aria-label="Twitter / X"
-                title="Twitter / X (coming soon)"
-              >
+              <button className="h-9 w-9 rounded-xl ring-1 ring-slate-200 grid place-items-center hover:bg-slate-50 transition" aria-label="Twitter / X">
                 <Twitter size={16} />
               </button>
-              <button
-                className="h-9 w-9 grid place-items-center rounded-xl bg-white ring-1 ring-slate-200 hover:bg-slate-50"
-                aria-label="Facebook"
-                title="Facebook (coming soon)"
-              >
+              <button className="h-9 w-9 rounded-xl ring-1 ring-slate-200 grid place-items-center hover:bg-slate-50 transition" aria-label="Facebook">
                 <Facebook size={16} />
               </button>
-              <button
-                className="h-9 w-9 grid place-items-center rounded-xl bg-white ring-1 ring-slate-200 hover:bg-slate-50"
-                aria-label="YouTube"
-                title="YouTube (coming soon)"
-              >
+              <button className="h-9 w-9 rounded-xl ring-1 ring-slate-200 grid place-items-center hover:bg-slate-50 transition" aria-label="YouTube">
                 <Youtube size={16} />
               </button>
             </div>
-          </GlassCard>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -1,19 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import {
-  LineChart,
-  CalendarDays,
-  GraduationCap,
-  User,
-  MessagesSquare,
-  Sparkles,
-} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { LineChart, CalendarDays, GraduationCap, User, Sparkles, Users } from "lucide-react";
 
 /** Minimal pathname hook without react-router */
 function usePathname() {
-  const [p, setP] = useState<string>(
-    typeof window !== "undefined" ? window.location.pathname || "/" : "/"
-  );
+  const [p, setP] = useState<string>(window.location.pathname || "/");
   useEffect(() => {
     const onPop = () => setP(window.location.pathname || "/");
     window.addEventListener("popstate", onPop);
@@ -22,27 +13,27 @@ function usePathname() {
   return p;
 }
 
-const NAV = [
-  { label: "Advisor", href: "/", Icon: LineChart },
-  { label: "Earnings", href: "/earnings", Icon: CalendarDays },
-  { label: "Learn", href: "/learn", Icon: GraduationCap },
-  { label: "Community", href: "/community", Icon: MessagesSquare }, // NEW
-  { label: "Emerging", href: "/emerging", Icon: Sparkles },         // NEW
-] as const;
+type NavItem = { label: string; href: string; Icon: React.ComponentType<{ size?: number | string }> };
+
+const NAV: NavItem[] = [
+  { label: "Advisor",    href: "/",          Icon: LineChart },
+  { label: "Emerging",   href: "/emerging",  Icon: Sparkles   },
+  { label: "Earnings",   href: "/earnings",  Icon: CalendarDays },
+  { label: "Community",  href: "/community", Icon: Users      },
+  { label: "Learn",      href: "/learn",     Icon: GraduationCap },
+];
 
 export default function Header() {
   const pathname = usePathname();
-  const prefersReducedMotion = useReducedMotion();
-
   const activeKey = useMemo(() => {
-    if (pathname.startsWith("/earnings")) return "/earnings";
-    if (pathname.startsWith("/learn")) return "/learn";
+    if (pathname.startsWith("/emerging"))  return "/emerging";
+    if (pathname.startsWith("/earnings"))  return "/earnings";
     if (pathname.startsWith("/community")) return "/community";
-    if (pathname.startsWith("/emerging")) return "/emerging";
+    if (pathname.startsWith("/learn"))     return "/learn";
     return "/";
   }, [pathname]);
 
-  // --- Sign-in popover (click to show; auto-hide; click-outside/Escape to close) ---
+  // --- Sign-in popover (click to show; auto-hide; click-outside to close) ---
   const [showTip, setShowTip] = useState(false);
   const tipTimer = useRef<number | null>(null);
   const signInRef = useRef<HTMLDivElement | null>(null);
@@ -52,15 +43,8 @@ export default function Header() {
       if (!signInRef.current) return;
       if (!signInRef.current.contains(e.target as Node)) setShowTip(false);
     };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setShowTip(false);
-    };
     document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
+    return () => document.removeEventListener("mousedown", onDown);
   }, []);
 
   useEffect(() => {
@@ -81,14 +65,13 @@ export default function Header() {
   return (
     <div className="sticky top-0 z-50">
       <div className="relative">
-        {/* glossy navy bar */}
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800" />
         <div className="absolute inset-0 pointer-events-none">
           <div className="h-16 w-full bg-[linear-gradient(120deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.03)_40%,rgba(255,255,255,0)_60%)]" />
         </div>
 
         <header className="relative h-16 flex items-center justify-between max-w-6xl mx-auto px-4 sm:px-6">
-          {/* Brand (text) */}
+          {/* Brand */}
           <a
             className="flex items-center gap-2 select-none"
             href="/"
@@ -105,7 +88,7 @@ export default function Header() {
             </div>
           </a>
 
-          {/* Glossy slider nav */}
+          {/* Desktop glossy slider nav */}
           <nav
             className="relative hidden md:flex items-center gap-1 px-1 py-1 rounded-2xl bg-white/10 ring-1 ring-white/15 backdrop-blur"
             aria-label="Primary"
@@ -116,28 +99,17 @@ export default function Header() {
                 <a
                   key={href}
                   href={href}
-                  aria-current={active ? "page" : undefined}
                   onClick={(e) => {
                     e.preventDefault();
                     push(href);
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      push(href);
-                    }
-                  }}
-                  className="relative isolate rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                  className="relative isolate"
                 >
                   {active && (
                     <motion.div
                       layoutId="navPill"
                       className="absolute inset-0 rounded-xl bg-white/70 shadow-lg"
-                      transition={
-                        prefersReducedMotion
-                          ? { duration: 0 }
-                          : { type: "spring", stiffness: 350, damping: 30 }
-                      }
+                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
                     />
                   )}
                   <div
@@ -145,7 +117,7 @@ export default function Header() {
                       active ? "text-slate-900" : "text-slate-200 hover:text-white"
                     }`}
                   >
-                    <Icon size={16} aria-hidden />
+                    <Icon size={16} />
                     {label}
                   </div>
                 </a>
@@ -156,12 +128,12 @@ export default function Header() {
           {/* Sign in (click -> popover) */}
           <div ref={signInRef} className="relative">
             <button
-              className="group flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-slate-200 hover:bg-white/15 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="group flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-slate-200 hover:bg-white/15 transition"
               aria-haspopup="dialog"
               aria-expanded={showTip}
               onClick={() => setShowTip((s) => !s)}
             >
-              <User size={16} className="opacity-90" aria-hidden />
+              <User size={16} className="opacity-90" />
               <span className="text-sm">Sign in</span>
             </button>
 
@@ -180,6 +152,29 @@ export default function Header() {
             </AnimatePresence>
           </div>
         </header>
+
+        {/* Mobile scrollable pills */}
+        <div className="relative md:hidden max-w-6xl mx-auto px-4 sm:px-6 pb-2">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1">
+            {NAV.map(({ label, href, Icon }) => {
+              const active = activeKey === href;
+              return (
+                <button
+                  key={href}
+                  onClick={() => push(href)}
+                  className={`shrink-0 inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm ring-1 transition
+                    ${active
+                      ? "bg-white text-slate-900 ring-white/60 shadow"
+                      : "bg-white/10 text-slate-200 ring-white/15 hover:bg-white/15"}`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  <Icon size={16} />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -98,3 +98,8 @@
 *::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 999px; }
 *::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
 *::-webkit-scrollbar-track { background-color: transparent; }
+
+/* hide horizontal scrollbar in the mobile pill nav */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
