@@ -1,138 +1,87 @@
-// web/src/App.tsx
-import React from "react";
-import { BrowserRouter, Routes, Route, NavLink, useLocation } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 import SmartWealthNeonWizard from "./components/SmartWealthNeonWizard";
 import EarningsCalendar from "./components/EarningsCalendar";
 import LearnHub from "./components/LearnHub";
+import CommunityWIP from "./components/CommunityWIP";     // NEW
+import EmergingStocks from "./components/EmergingStocks"; // NEW
+import SkylineFooter from "./components/SkylineFooter";   // (you already have this)
 
-import { Banknote, LineChart, CalendarDays, GraduationCap } from "lucide-react";
-
-function Header() {
-  const linkBase =
-    "px-3 py-2 rounded-xl text-sm transition ring-1 focus:outline-none focus:ring-2 focus:ring-sky-400/60";
-  const linkInactive = "text-slate-200/80 ring-slate-800 hover:bg-slate-800/60 hover:text-white";
-  const linkActive = "bg-slate-800 text-white ring-slate-700";
-
-  return (
-    <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-800">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="h-14 flex items-center gap-4">
-          {/* Brand (left-aligned, white, no animation) */}
-          <NavLink to="/" className="group flex items-center gap-2 select-none" aria-label="SmartWealth AI Home">
-            <span className="h-7 w-7 grid place-items-center rounded-lg bg-slate-800 ring-1 ring-slate-700">
-              <Banknote size={16} className="text-emerald-300" />
-            </span>
-            <span className="text-base sm:text-lg font-bold text-white tracking-tight">
-              SmartWealth AI
-            </span>
-          </NavLink>
-
-          {/* Nav */}
-          <nav className="flex items-center gap-2">
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) =>
-                `${linkBase} ${isActive ? linkActive : linkInactive} flex items-center gap-1.5`
-              }
-            >
-              <LineChart size={14} />
-              <span>Advisor</span>
-            </NavLink>
-
-            <NavLink
-              to="/earnings"
-              className={({ isActive }) =>
-                `${linkBase} ${isActive ? linkActive : linkInactive} flex items-center gap-1.5`
-              }
-            >
-              <CalendarDays size={14} />
-              <span>Earnings</span>
-            </NavLink>
-
-            <NavLink
-              to="/learn"
-              className={({ isActive }) =>
-                `${linkBase} ${isActive ? linkActive : linkInactive} flex items-center gap-1.5`
-              }
-            >
-              <GraduationCap size={14} />
-              <span>Learn</span>
-            </NavLink>
-          </nav>
-        </div>
-      </div>
-    </header>
-  );
+/** Minimal pathname hook */
+function usePathname() {
+  const [p, setP] = useState<string>(window.location.pathname || "/");
+  useEffect(() => {
+    const onPop = () => setP(window.location.pathname || "/");
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+  return p;
 }
 
-function PageTransition({ children }: { children: React.ReactNode }) {
-  // Subtle page transition on route change (title itself is not animated)
-  return (
-    <motion.main
-      key={useLocation().pathname}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.25 }}
-      className="min-h-[calc(100vh-56px)]"
-    >
-      {children}
-    </motion.main>
-  );
-}
+type Route = { path: string; key: string; title: string; element: React.ReactNode };
 
-function AppRoutes() {
-  return (
-    <AnimatePresence mode="wait">
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <PageTransition>
-              <SmartWealthNeonWizard />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/earnings"
-          element={
-            <PageTransition>
-              <EarningsCalendar />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/learn"
-          element={
-            <PageTransition>
-              <LearnHub />
-            </PageTransition>
-          }
-        />
-        {/* Fallback: redirect unknown routes to Advisor */}
-        <Route
-          path="*"
-          element={
-            <PageTransition>
-              <SmartWealthNeonWizard />
-            </PageTransition>
-          }
-        />
-      </Routes>
-    </AnimatePresence>
-  );
-}
+const ROUTES: Route[] = [
+  { path: "/",          key: "advisor",   title: "Advisor",   element: <SmartWealthNeonWizard /> },
+  { path: "/earnings",  key: "earnings",  title: "Earnings",  element: <EarningsCalendar /> },
+  { path: "/learn",     key: "learn",     title: "Learn",     element: <LearnHub /> },
+  { path: "/community", key: "community", title: "Community", element: <CommunityWIP /> },     // NEW
+  { path: "/emerging",  key: "emerging",  title: "Emerging",  element: <EmergingStocks /> },   // NEW
+];
 
 export default function App() {
+  const pathname = usePathname();
+
+  const activeRoute = useMemo<Route>(() => {
+    if (pathname.startsWith("/earnings"))  return ROUTES[1];
+    if (pathname.startsWith("/learn"))     return ROUTES[2];
+    if (pathname.startsWith("/community")) return ROUTES[3];
+    if (pathname.startsWith("/emerging"))  return ROUTES[4];
+    return ROUTES[0];
+  }, [pathname]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeRoute.key]);
+
   return (
-    <BrowserRouter>
-      <div className="min-h-screen">
-        <Header />
-        <AppRoutes />
+    <div className="min-h-screen text-slate-900 pb-16">
+      {/* Soft light background */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(1200px 600px at 10% -10%, #ecfeff 0%, transparent 60%)," +
+              "radial-gradient(900px 500px at 90% -20%, #fff7ed 0%, transparent 60%)," +
+              "linear-gradient(#f8fafc, #f1f5f9)",
+          }}
+        />
       </div>
-    </BrowserRouter>
+
+      <Header />
+
+      <main className="relative">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeRoute.key}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+          >
+            {activeRoute.element}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Show the large skyline footer ONLY on the Advisor (/) */}
+        {activeRoute.key === "advisor" && <SkylineFooter />}
+      </main>
+
+      <Footer />
+    </div>
   );
 }
