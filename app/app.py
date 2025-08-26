@@ -1,4 +1,5 @@
 # app/app.py
+# Updated for Railway deployment - Root directory: /app
 from __future__ import annotations
 
 import os
@@ -38,7 +39,8 @@ allowed_origins = [
     "http://127.0.0.1:5002", "http://localhost:5002", 
     "http://localhost:3000", "http://127.0.0.1:3000", 
     "http://localhost:5173", "http://127.0.0.1:5173",
-    "https://your-frontend-domain.vercel.app"  # Replace with your actual Vercel domain
+    "https://smart-wealth-simple.vercel.app",  # Your Vercel domain
+    "https://smart-wealth-simple-git-main-pratiks-projects.vercel.app"  # Alternative Vercel domain format
 ]
 
 # Allow all origins in development, specific origins in production
