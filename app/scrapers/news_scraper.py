@@ -4,8 +4,18 @@ import feedparser
 from datetime import datetime, timedelta
 import json
 from typing import Dict, List, Optional
-from textblob import TextBlob
 import re
+
+# Try to import TextBlob, but handle gracefully if NLTK data is not available
+try:
+    from textblob import TextBlob
+    TEXTBLOB_AVAILABLE = True
+except Exception as e:
+    print(f"Warning: TextBlob not available: {e}")
+    TEXTBLOB_AVAILABLE = False
+
+# Import simple sentiment analyzer as fallback
+from simple_sentiment import SimpleSentimentAnalyzer
 
 class NewsScraper:
     def __init__(self):
@@ -13,6 +23,8 @@ class NewsScraper:
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         })
+        # Initialize sentiment analyzer
+        self.sentiment_analyzer = SimpleSentimentAnalyzer()
     
     def get_yahoo_finance_news(self, category: str = 'general', limit: int = 20) -> List[Dict]:
         """Get news from Yahoo Finance"""
@@ -183,16 +195,20 @@ class NewsScraper:
             return {'error': str(e)}
     
     def _analyze_sentiment(self, text: str) -> Dict:
-        """Analyze sentiment of text using TextBlob"""
-        try:
-            blob = TextBlob(text)
-            return {
-                'polarity': blob.sentiment.polarity,  # -1 to 1
-                'subjectivity': blob.sentiment.subjectivity,  # 0 to 1
-                'sentiment': 'positive' if blob.sentiment.polarity > 0.1 else 'negative' if blob.sentiment.polarity < -0.1 else 'neutral'
-            }
-        except Exception:
-            return {'polarity': 0, 'subjectivity': 0, 'sentiment': 'neutral'}
+        """Analyze sentiment of text using TextBlob or fallback to simple analyzer"""
+        if TEXTBLOB_AVAILABLE:
+            try:
+                blob = TextBlob(text)
+                return {
+                    'polarity': blob.sentiment.polarity,  # -1 to 1
+                    'subjectivity': blob.sentiment.subjectivity,  # 0 to 1
+                    'sentiment': 'positive' if blob.sentiment.polarity > 0.1 else 'negative' if blob.sentiment.polarity < -0.1 else 'neutral'
+                }
+            except Exception:
+                pass
+        
+        # Fallback to simple sentiment analyzer
+        return self.sentiment_analyzer.analyze_sentiment(text)
     
     def _extract_image_from_content(self, content: str) -> str:
         """Extract image URL from content if available"""

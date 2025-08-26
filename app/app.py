@@ -16,6 +16,8 @@ from dateutil.relativedelta import relativedelta
 from flask import Flask, send_from_directory, render_template, request, jsonify, Response
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
+
+# Note: NLTK data will be handled gracefully by the sentiment analyzer
 from scrapers.yahoo_finance_scraper import YahooFinanceScraper
 from scrapers.news_scraper import NewsScraper
 from scrapers.morningstar_scraper import MorningstarScraper

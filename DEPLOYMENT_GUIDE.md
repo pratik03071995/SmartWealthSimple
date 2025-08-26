@@ -19,6 +19,8 @@ In Railway dashboard, add these environment variables:
 FLASK_ENV=production
 ```
 
+**Note**: The app now includes a fallback sentiment analyzer that doesn't require NLTK data, so it should deploy successfully without additional configuration.
+
 ### Step 3: Get Your Backend URL
 
 After deployment, Railway will give you a URL like:
