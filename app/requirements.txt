@@ -27,3 +27,8 @@ aiohttp
 scipy
 
 # transformers sentence-transformers torch
+transformers
+torch
+sentence-transformers
+
+pysqlite3-binary

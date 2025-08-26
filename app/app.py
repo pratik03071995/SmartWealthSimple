@@ -981,6 +981,14 @@ def score_stocks_endpoint():
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def catch_all(path):
+    # Don't serve frontend for API routes
+    if path.startswith("api/"):
+        return jsonify({"error": "API endpoint not found"}), 404
+    
+    # Don't serve frontend for docs route
+    if path.startswith("docs"):
+        return jsonify({"error": "Documentation endpoint not found"}), 404
+    
     static_path = os.path.join(app.static_folder, path)
     if path and os.path.exists(static_path):
         return send_from_directory(app.static_folder, path)
