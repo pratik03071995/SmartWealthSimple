@@ -30,7 +30,20 @@ from stock_scoring import score_stocks
 # Flask app
 # =========================
 app = Flask(__name__, static_folder="static", template_folder="templates")
-CORS(app, origins=["http://127.0.0.1:5001", "http://localhost:5001", "http://127.0.0.1:5002", "http://localhost:5002", "http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173", "http://127.0.0.1:5173"])
+# Configure CORS for production
+allowed_origins = [
+    "http://127.0.0.1:5001", "http://localhost:5001", 
+    "http://127.0.0.1:5002", "http://localhost:5002", 
+    "http://localhost:3000", "http://127.0.0.1:3000", 
+    "http://localhost:5173", "http://127.0.0.1:5173",
+    "https://your-frontend-domain.vercel.app"  # Replace with your actual Vercel domain
+]
+
+# Allow all origins in development, specific origins in production
+if os.environ.get('FLASK_ENV') == 'production':
+    CORS(app, origins=allowed_origins)
+else:
+    CORS(app, origins=["*"])
 
 # Swagger UI configuration
 SWAGGER_URL = '/docs'

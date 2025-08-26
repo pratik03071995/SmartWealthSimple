@@ -2,6 +2,7 @@
 flask
 flask-cors
 flask-swagger-ui
+gunicorn
 
 # Data processing (actually used)
 pandas
@@ -23,3 +24,5 @@ aiohttp
 
 # Stock scoring dependencies
 scipy
+
+# transformers sentence-transformers torch
