@@ -1,9 +1,9 @@
 // API Configuration for different environments
 const getApiBaseUrl = () => {
-  // In development, use localhost
-  if (import.meta.env.DEV) {
-    return 'http://127.0.0.1:5001';
-  }
+         // In development, use localhost
+       if (import.meta.env.DEV) {
+         return 'http://127.0.0.1:5000';
+       }
   
   // In production, use the deployed backend URL
   // You'll need to replace this with your actual deployed backend URL

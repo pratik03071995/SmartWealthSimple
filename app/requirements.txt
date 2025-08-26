@@ -1,40 +1,25 @@
+# Core Flask dependencies
 flask
 flask-cors
+flask-swagger-ui
+
+# Data processing (actually used)
 pandas
 numpy
+scipy
+
+# Financial data
+yfinance
+
+# Date utilities
+python-dateutil
+
+# Web scraping (actually used)
 requests
 beautifulsoup4
-lxml
-yfinance
-alpha-vantage
-newsapi-python
-selenium
-webdriver-manager
-plotly
-dash
-dash-bootstrap-components
-python-dotenv
-schedule
-aiohttp
-asyncio
-scrapy
 feedparser
 textblob
-nltk
-scikit-learn
-matplotlib
-seaborn
-# LLM and AI packages
-transformers
-torch
-sentence-transformers
-openai
-anthropic
-langchain
-langchain-community
-langchain-openai
-chromadb
-faiss-cpu
-tiktoken
-accelerate
-bitsandbytes
+aiohttp
+
+# Stock scoring dependencies
+scipy

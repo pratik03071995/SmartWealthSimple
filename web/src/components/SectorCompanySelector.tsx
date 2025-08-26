@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { API_ENDPOINTS } from '../config';
+import { useCompanies } from '../context/CompaniesContext';
 
 interface Company {
   ticker: string;
@@ -30,22 +31,25 @@ type SortDirection = 'asc' | 'desc';
 const SectorCompanySelector: React.FC = () => {
   const [sectors, setSectors] = useState<SectorData[]>([]);
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
-  const [companies, setCompanies] = useState<Company[]>([]);
+  const { companies, setCompanies, clearCompanies } = useCompanies();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<'sectors' | 'companies'>('sectors');
   const [sortField, setSortField] = useState<SortField>('market_cap');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [sortDirection] = useState<SortDirection>('desc');
 
   // Fetch available sectors on component mount
   useEffect(() => {
     fetchSectors();
   }, []);
 
-  // Monitor companies state changes
+  // Clear companies when component unmounts or when starting fresh
   useEffect(() => {
-    // Companies state updated
-  }, [companies]);
+    return () => {
+      // Optional: clear companies when leaving this page
+      // clearCompanies();
+    };
+  }, [clearCompanies]);
 
   const fetchSectors = async () => {
     try {

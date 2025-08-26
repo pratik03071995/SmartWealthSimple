@@ -18,6 +18,7 @@ type NavItem = { label: string; href: string; Icon: React.ComponentType<{ size?:
 const NAV: NavItem[] = [
   { label: "Advisor",    href: "/",          Icon: LineChart },
   { label: "Sectors",    href: "/sectors",   Icon: BarChart3 },
+  { label: "Scoring",    href: "/scoring",   Icon: BarChart3 },
   { label: "Emerging",   href: "/emerging",  Icon: Sparkles   },
   { label: "Earnings",   href: "/earnings",  Icon: CalendarDays },
   { label: "Community",  href: "/community", Icon: Users      },
@@ -28,6 +29,7 @@ export default function Header() {
   const pathname = usePathname();
   const activeKey = useMemo(() => {
     if (pathname.startsWith("/sectors"))   return "/sectors";
+    if (pathname.startsWith("/scoring"))   return "/scoring";
     if (pathname.startsWith("/emerging"))  return "/emerging";
     if (pathname.startsWith("/earnings"))  return "/earnings";
     if (pathname.startsWith("/community")) return "/community";

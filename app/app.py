@@ -24,6 +24,7 @@ from scrapers.finviz_scraper import FinvizScraper
 from scrapers.data_aggregator import DataAggregator
 from ai.sector_analyzer import SectorAnalyzer
 from ai.stock_recommender import AIStockRecommender
+from stock_scoring import score_stocks
 
 # =========================
 # Flask app
@@ -868,6 +869,96 @@ def get_companies_dynamic():
         return jsonify({"error": str(e)}), 500
 
 # =========================
+# AI Sectors Endpoint
+# =========================
+@app.route("/api/ai/sectors", methods=["GET"])
+def get_sectors():
+    """Get available sectors for analysis"""
+    sectors = [
+        {
+            "name": "Technology",
+            "description": "Software, hardware, semiconductors, and digital services",
+            "growth_potential": "High",
+            "risk_level": "Medium",
+            "subsector_count": 10,
+            "key_drivers": ["Digital transformation", "AI/ML adoption", "Cloud migration"]
+        },
+        {
+            "name": "Healthcare",
+            "description": "Pharmaceuticals, biotechnology, medical devices",
+            "growth_potential": "High",
+            "risk_level": "High",
+            "subsector_count": 8,
+            "key_drivers": ["Aging population", "Medical innovation", "Healthcare digitization"]
+        },
+        {
+            "name": "Financial Services",
+            "description": "Banks, insurance, fintech, and investment services",
+            "growth_potential": "Medium",
+            "risk_level": "Medium",
+            "subsector_count": 6,
+            "key_drivers": ["Digital banking", "Regulatory changes", "Interest rate environment"]
+        },
+        {
+            "name": "Consumer Discretionary",
+            "description": "Retail, automotive, entertainment, and luxury goods",
+            "growth_potential": "Medium",
+            "risk_level": "Medium",
+            "subsector_count": 7,
+            "key_drivers": ["Consumer spending", "E-commerce growth", "Brand loyalty"]
+        },
+        {
+            "name": "Energy",
+            "description": "Oil & gas, renewable energy, and utilities",
+            "growth_potential": "Low",
+            "risk_level": "High",
+            "subsector_count": 5,
+            "key_drivers": ["Energy transition", "Geopolitical factors", "Climate policies"]
+        }
+    ]
+    return jsonify({"sectors": sectors})
+
+
+
+# =========================
+# Stock Scoring Endpoint
+# =========================
+@app.route("/api/score-stocks", methods=["POST"])
+def score_stocks_endpoint():
+    try:
+        data = request.get_json()
+        tickers = data.get('tickers', [])
+        manual_inputs = data.get('manual_inputs', {})
+        
+        if not tickers:
+            return jsonify({"error": "No tickers provided"}), 400
+        
+        if len(tickers) > 10:
+            return jsonify({"error": "Maximum 10 stocks allowed per request"}), 400
+        
+        results = score_stocks(tickers, manual_inputs)
+        
+        formatted_results = []
+        for result in results:
+            formatted_results.append({
+                "ticker": result["ticker"],
+                "name": result["company_info"]["name"],
+                "sector": result["company_info"]["sector"],
+                "industry": result["company_info"]["industry"],
+                "marketCap": result["company_info"]["market_cap"],
+                "totalScore": result["total_score"],
+                "grade": result["grade"],
+                "scores": result["scores"],
+                "details": result["details"],
+                "weights": result["weights"]
+            })
+        
+        return jsonify(formatted_results)
+        
+    except Exception as e:
+        return jsonify({"error": f"Scoring error: {str(e)}"}), 500
+
+# =========================
 # Serve SPA
 # =========================
 @app.route("/", defaults={"path": ""})
@@ -888,4 +979,4 @@ if __name__ == "__main__":
         except Exception:
             pass
     threading.Thread(target=_warm, daemon=True).start()
-    app.run(port=5001, debug=True, host='0.0.0.0')
+    app.run(port=5000, debug=True, host='0.0.0.0')
