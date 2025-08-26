@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Rocket, LineChart, ChevronRight, ArrowLeft, Shield } from 'lucide-react'
+import { API_BASE_URL } from '../config'
 
 /** ======== LIGHT THEME ======== */
 const CARD_BG = "bg-white border border-slate-200"
@@ -261,7 +262,7 @@ export default function SmartWealthNeonWizard() {
     setSubmitting(true)
     const payload = { name, age, horizon, risk, sectors, subSectors, goalReturn, monthlyContribution, capital }
     try {
-      const res = await fetch('/api/recommend', {
+      const res = await fetch(`${API_BASE_URL}/api/recommend`, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify(payload)

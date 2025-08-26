@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BarChart3, TrendingUp, Info, CheckCircle, AlertCircle } from 'lucide-react';
 import { useCompanies } from '../context/CompaniesContext';
+import { API_BASE_URL } from '../config';
 
 interface Company {
   ticker: string;
@@ -119,7 +120,7 @@ const StockScoring: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch('/api/score-stocks', {
+      const response = await fetch(`${API_BASE_URL}/api/score-stocks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

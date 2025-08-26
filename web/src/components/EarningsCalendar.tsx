@@ -5,6 +5,7 @@ import {
   ChevronLeft, ChevronRight, Loader2,
   Sparkles, TrendingUp, Info, Calendar as CalIcon
 } from "lucide-react";
+import { API_BASE_URL } from '../config';
 
 type EarnEvent = {
   ticker: string;
@@ -142,7 +143,7 @@ function EventDetailModal({
     if (!open) return;
     setLoading(true);
     setDetail(null);
-    fetch(`/api/earnings_detail?ticker=${encodeURIComponent(ticker)}`)
+    fetch(`${API_BASE_URL}/api/earnings_detail?ticker=${encodeURIComponent(ticker)}`)
       .then(r => r.json())
       .then((d: EarnDetail) => { if (active) setDetail(d); })
       .catch(() => { if (active) setDetail(null); })
@@ -248,11 +249,11 @@ export default function EarningsCalendar() {
     if (first) {
       setOverlay(true);
       Promise.all([
-        fetch(`/api/earnings_week?start=${startISO}`).then(r => r.json()).then((d: EarnEvent[]) => setEvents(d || [])),
+        fetch(`${API_BASE_URL}/api/earnings_week?start=${startISO}`).then(r => r.json()).then((d: EarnEvent[]) => setEvents(d || [])),
         new Promise(res => setTimeout(res, FIRST_LOAD_MS)),
       ]).then(() => { setOverlay(false); overlayShownRef.current = true; });
     } else {
-      fetch(`/api/earnings_week?start=${startISO}`).then(r => r.json()).then((d: EarnEvent[]) => setEvents(d || [])).catch(()=>setEvents([]));
+      fetch(`${API_BASE_URL}/api/earnings_week?start=${startISO}`).then(r => r.json()).then((d: EarnEvent[]) => setEvents(d || [])).catch(()=>setEvents([]));
     }
   }, [weekStart]);
 
