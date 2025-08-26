@@ -40,14 +40,23 @@ allowed_origins = [
     "http://localhost:3000", "http://127.0.0.1:3000", 
     "http://localhost:5173", "http://127.0.0.1:5173",
     "https://smart-wealth-simple.vercel.app",  # Your Vercel domain
-    "https://smart-wealth-simple-git-main-pratiks-projects.vercel.app"  # Alternative Vercel domain format
+    "https://smart-wealth-simple-git-main-pratiks-projects.vercel.app",  # Alternative Vercel domain format
+    "https://smart-wealth-simple-git-develop-pratiks-projects.vercel.app"  # Additional Vercel domain format
 ]
 
-# Allow all origins in development, specific origins in production
-if os.environ.get('FLASK_ENV') == 'production':
-    CORS(app, origins=allowed_origins)
-else:
-    CORS(app, origins=["*"])
+# Configure CORS properly for all environments
+CORS(app, origins=allowed_origins, supports_credentials=True, methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+
+# Add CORS headers to all responses
+@app.after_request
+def after_request(response):
+    origin = request.headers.get('Origin')
+    if origin in allowed_origins:
+        response.headers.add('Access-Control-Allow-Origin', origin)
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
 
 # Swagger UI configuration
 SWAGGER_URL = '/docs'
