@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
+import OrnamentBackdrop from "./components/OrnamentBackdrop";
 import SmartWealthNeonWizard from "./components/SmartWealthNeonWizard";
 import EarningsCalendar from "./components/EarningsCalendar";
 import LearnHub from "./components/LearnHub";
@@ -49,8 +49,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen text-slate-900 pb-16">
-      {/* Soft light background */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
+      {/* Soft light background (pushed back a layer) */}
+      <div className="fixed inset-0 -z-20 pointer-events-none">
         <div
           className="absolute inset-0"
           style={{
@@ -61,6 +61,12 @@ export default function App() {
           }}
         />
       </div>
+
+      {/* Ornaments above background, below content */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <OrnamentBackdrop />
+      </div>
+
 
       <Header />
 
