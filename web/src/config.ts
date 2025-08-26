@@ -25,7 +25,8 @@ console.log('API Configuration:', {
 });
 
 export const API_ENDPOINTS = {
-  sectors: `${API_BASE_URL}/api/ai/sectors`,
-  companies: `${API_BASE_URL}/api/companies/dynamic`,
-  health: `${API_BASE_URL}/health`,
+  sectors: `/api/ai/sectors`,
+  companies: `/api/companies/dynamic`,
+  health: `/api/health`,
 };
+

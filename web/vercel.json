@@ -1,6 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://smart-health-ai.up.railway.app/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
   "env": {
-    "VITE_API_URL": "https://smart-health-ai.up.railway.app"
+    "VITE_API_URL": "/api"
   }
 }
